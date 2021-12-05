@@ -36,9 +36,10 @@ out vec2 vTexCoord;
 out vec3 vNormal;
 
 void main() {
-  vTexCoord.s = aVertexPosition.x + 0.5;
-  vTexCoord.t = aVertexPosition.y + 0.5;
-
+  //float r = pow(aVertexPosition.x * aVertexPosition.x + aVertexPosition.y * aVertexPosition.y,0.5);
+  //float theta = atan(aVertexPosition.y / aVertexPosition.x);
+  vTexCoord.s = ((0.5 * 3.14159265)+atan(aVertexPosition.x, aVertexPosition.z))/(2. * 3.14159265);
+  vTexCoord.t = (aVertexPosition.y*2. + 0.5);
   gl_Position = uProjectionMatrix*uModelViewMatrix*vec4(aVertexPosition, 1.0);
 }
 `;
@@ -61,7 +62,7 @@ out vec4 outColor;
 void main() {
   vec3 illinois = vec3(texture(uSampler, vTexCoord));
   vec3 stadium = vec3(texture(uSampler2, vTexCoord));
-  vec3 c = 0.5*illinois + 0.5*stadium;
+  vec3 c = illinois;
 
   outColor = vec4(c,1.0);
 }
@@ -153,7 +154,7 @@ function initwebgl() {
                 gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 
   var image = new Image();
-  image.src = "illinois512.png";
+  image.src = "illinois512-noborder.png";
 
   image.addEventListener("load", function() {
     gl.bindTexture(gl.TEXTURE_2D, texture);

@@ -32,14 +32,13 @@ uniform mat4 uModelViewMatrix;
 uniform mat3 uNormalMatrix;
 uniform mat4 uProjectionMatrix;
 
-out vec2 vTexCoord;
+out vec3 vVertexPos;
 out vec3 vNormal;
 out vec2 sphere_coord;
 out vec3 n,l,v;
 
 void main() {
-  vTexCoord.s = aVertexPosition.x + 0.5;
-  vTexCoord.t = aVertexPosition.y + 0.5;
+  vVertexPos = aVertexPosition;
 
   n = normalize(uNormalMatrix*aVertexNormal);
   l = normalize(vec3(1.0,1.0,1.0));
@@ -76,12 +75,17 @@ in vec3 n,l,v;
 in vec3 vNormal;
 in vec2 vTexCoord;
 in vec2 sphere_coord;
+in vec3 vVertexPos;
 uniform sampler2D uSampler;
 uniform sampler2D uSampler2;
 
 out vec4 outColor;
 
 void main() {
+  float s = ((0.5 * 3.14159265)+atan(vVertexPos.x, vVertexPos.z))/(2. * 3.14159265);
+  float t = (vVertexPos.y*2. + 0.5);
+  vec2 vTexCoord = vec2(s, t);
+
   vec3 illinois = vec3(texture(uSampler, vTexCoord));
   vec3 stadium = vec3(texture(uSampler2, sphere_coord).rgb);
 
@@ -188,7 +192,7 @@ function initwebgl() {
                 gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 
   var image = new Image();
-  image.src = "illinois512.png";
+  image.src = "illinois512-noborder.png";
 
   image.addEventListener("load", function() {
     gl.bindTexture(gl.TEXTURE_2D, texture);
